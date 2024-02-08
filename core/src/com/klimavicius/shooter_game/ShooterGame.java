@@ -6,15 +6,8 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.klimavicius.shooter_game.screens.MainMenuScreen;
 
 public class ShooterGame extends Game {
-//	private Stage stage;
-//
-//	public Stage getStage() {
-//		return stage;
-//	}
-
 	@Override
 	public void create () {
-//		stage = new Stage();
 		this.setScreen(new MainMenuScreen(this));
 	}
 
