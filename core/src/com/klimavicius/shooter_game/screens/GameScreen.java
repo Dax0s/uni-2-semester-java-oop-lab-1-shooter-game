@@ -44,6 +44,7 @@ public class GameScreen implements Screen {
         Vector2 playerPos = new Vector2();
         player.getPlayerRectangle().getPosition(playerPos);
 
+        // TODO: move camera controls into player
         if (customStage.getCamera().position.x < playerPos.x)
             customStage.getCamera().translate(300 * delta, 0);
         if (customStage.getCamera().position.x > playerPos.x)
