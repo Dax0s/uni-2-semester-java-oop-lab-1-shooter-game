@@ -5,9 +5,9 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 public class CustomStage {
-    OrthographicCamera camera;
-    ScreenViewport viewport;
-    Stage stage;
+    private final OrthographicCamera camera;
+    private final ScreenViewport viewport;
+    private final Stage stage;
 
     public CustomStage(boolean yDown, float viewportWidth, float viewportHeight) {
         this.camera = new OrthographicCamera();
