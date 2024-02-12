@@ -21,6 +21,10 @@ public class Player extends Actor {
     private boolean moveUp = false;
     private boolean moveDown = false;
 
+    public Rectangle getPlayerRectangle() {
+        return playerRectangle;
+    }
+
     public Player(double speed) {
         this.speed = speed;
 
