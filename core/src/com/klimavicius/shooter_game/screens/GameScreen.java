@@ -19,10 +19,10 @@ public class GameScreen implements Screen {
     Texture backgroundTexture;
 
     public GameScreen(ShooterGame game) {
-        this.game = game;
-        this.player = new Player(Constants.PLAYER_SPEED);
-
         customStage = new CustomStage(false, Constants.SCREEN_WIDTH, Constants.SCREEN_HEIGHT);
+
+        this.game = game;
+        this.player = new Player(customStage.getCamera(), Constants.PLAYER_SPEED, Constants.CAMERA_SPEED);
 
         Gdx.input.setInputProcessor(customStage.getStage());
 
@@ -40,19 +40,6 @@ public class GameScreen implements Screen {
     @Override
     public void render(float delta) {
         ScreenUtils.clear(1, 1, 1, 1);
-
-        Vector2 playerPos = new Vector2();
-        player.getPlayerRectangle().getPosition(playerPos);
-
-        // TODO: move camera controls into player
-        if (customStage.getCamera().position.x < playerPos.x)
-            customStage.getCamera().translate(300 * delta, 0);
-        if (customStage.getCamera().position.x > playerPos.x)
-            customStage.getCamera().translate(-300 * delta, 0);
-        if (customStage.getCamera().position.y < playerPos.y)
-            customStage.getCamera().translate(0, 300 * delta);
-        if (customStage.getCamera().position.y > playerPos.y)
-            customStage.getCamera().translate(0, -300 * delta);
 
         customStage.getStage().getBatch().begin();
         customStage.getStage().getBatch().draw(backgroundTexture, 0, 0);

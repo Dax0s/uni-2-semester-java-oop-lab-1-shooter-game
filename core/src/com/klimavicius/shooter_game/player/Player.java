@@ -2,35 +2,45 @@ package com.klimavicius.shooter_game.player;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.klimavicius.shooter_game.utils.Constants;
 
+import javax.imageio.ImageTranscoder;
+
 public class Player extends Actor {
+    private final OrthographicCamera camera;
+
     private final Texture playerImage;
-    private final Rectangle playerRectangle;
+    private final Rectangle rectangle;
 
     private final double speed;
+    private final double cameraSpeed;
+    private boolean cameraAtEdge = false;
 
     private boolean moveLeft = false;
     private boolean moveRight = false;
     private boolean moveUp = false;
     private boolean moveDown = false;
 
-    public Rectangle getPlayerRectangle() {
-        return playerRectangle;
+    public Rectangle getRectangle() {
+        return rectangle;
     }
 
-    public Player(double speed) {
+    public Player(OrthographicCamera camera, double speed, double cameraSpeed) {
         this.speed = speed;
+        this.cameraSpeed = cameraSpeed;
+        this.camera = camera;
 
-        playerImage = new Texture(Gdx.files.internal("tree.png"));
+        playerImage = new Texture(Gdx.files.internal("player.png"));
 
-        playerRectangle = new Rectangle(
+        rectangle = new Rectangle(
                 (float) Constants.SCREEN_WIDTH / 2 - (float) 64 / 2,
                 (float) Constants.SCREEN_HEIGHT / 2 - (float) 64 / 2,
                 64,
@@ -70,7 +80,7 @@ public class Player extends Actor {
 
     @Override
     public void draw(Batch batch, float parentAlpha) {
-        batch.draw(playerImage, playerRectangle.x, playerRectangle.y);
+        batch.draw(playerImage, rectangle.x, rectangle.y, 64, 64);
     }
 
     private int countMovementBooleans() {
@@ -89,18 +99,38 @@ public class Player extends Actor {
 
     @Override
     public void act(float delta) {
-        double speed = this.speed;
+        float speed = (float) this.speed;
+        float cameraSpeed = (float) this.cameraSpeed;
 
         if (countMovementBooleans() == 2)
-            speed *= 0.7;
+            speed *= 0.7f;
+        if (countMovementBooleans() == 2)
+            cameraSpeed *= 0.7f;
 
         if (moveLeft)
-            playerRectangle.x -= (int) (speed * delta);
+            rectangle.x -= (speed * delta);
          if (moveRight)
-            playerRectangle.x += (int) (speed * delta);
+            rectangle.x += (speed * delta);
          if (moveDown)
-            playerRectangle.y -= (int) (speed * delta);
+            rectangle.y -= (speed * delta);
         if (moveUp)
-            playerRectangle.y += (int) (speed * delta);
+            rectangle.y += (speed * delta);
+
+        double distance = Math.sqrt(Math.pow(Math.abs(rectangle.x - camera.position.x), 2) +
+                        Math.pow(Math.abs(rectangle.y - camera.position.y), 2));
+
+        if (distance >= 100)
+            cameraSpeed = speed;
+
+
+        if (camera.position.x < rectangle.x)
+            camera.translate(cameraSpeed * delta, 0);
+        if (camera.position.x > rectangle.x)
+            camera.translate(-cameraSpeed * delta, 0);
+        if (camera.position.y < rectangle.y)
+            camera.translate(0, cameraSpeed * delta);
+        if (camera.position.y > rectangle.y)
+            camera.translate(0, -cameraSpeed * delta);
+
     }
 }
