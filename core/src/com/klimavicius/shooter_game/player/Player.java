@@ -23,8 +23,8 @@ public class Player extends Actor {
     private final Texture texture;
     private final Rectangle rectangle;
 
-    private final double speed;
-    private final double cameraSpeed;
+    private final float speed;
+    private final float cameraSpeed;
 
     private boolean moveLeft = false;
     private boolean moveRight = false;
@@ -35,7 +35,7 @@ public class Player extends Actor {
         return rectangle;
     }
 
-    public Player(OrthographicCamera camera, Stage stage, double speed, double cameraSpeed) {
+    public Player(OrthographicCamera camera, Stage stage, float speed, float cameraSpeed) {
         this.speed = speed;
         this.cameraSpeed = cameraSpeed;
         this.camera = camera;
@@ -43,8 +43,8 @@ public class Player extends Actor {
         texture = new Texture(Gdx.files.internal("player.png"));
 
         rectangle = new Rectangle(
-                (float) Constants.SCREEN_WIDTH / 2 - (float) 64 / 2,
-                (float) Constants.SCREEN_HEIGHT / 2 - (float) 64 / 2,
+                Constants.SCREEN_WIDTH / 2.0f - 64 / 2.0f,
+                Constants.SCREEN_HEIGHT / 2.0f - 64 / 2.0f,
                 64,
                 64
         );
@@ -126,8 +126,8 @@ public class Player extends Actor {
 
     @Override
     public void act(float delta) {
-        float speed = (float) this.speed;
-        float cameraSpeed = (float) this.cameraSpeed;
+        float speed = this.speed;
+        float cameraSpeed = this.cameraSpeed;
 
         if (countMovementBooleans() == 2)
             speed *= 0.7f;

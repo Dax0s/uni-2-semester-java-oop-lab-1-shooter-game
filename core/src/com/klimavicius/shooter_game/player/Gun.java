@@ -19,8 +19,8 @@ public class Gun extends Actor {
     public Gun() {
         this.texture = new Texture(Gdx.files.internal("gun2.png"));
         this.rectangle = new Rectangle(
-                (float) Constants.SCREEN_WIDTH / 2 - 64 / 2.0f,
-                (float) Constants.SCREEN_WIDTH / 2 - 64 / 2.0f,
+                Constants.SCREEN_WIDTH / 2.0f - 64 / 2.0f,
+                Constants.SCREEN_WIDTH / 2.0f - 64 / 2.0f,
                 64,
                 64
         );
