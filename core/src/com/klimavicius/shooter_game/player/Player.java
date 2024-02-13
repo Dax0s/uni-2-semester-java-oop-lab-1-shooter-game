@@ -56,20 +56,23 @@ public class Player extends Actor {
             // MOUSE EVENTS
             @Override
             public boolean mouseMoved(InputEvent event, float x, float y) {
-                gunAngleVector.x = x - gun.getRectangle().x;
-                gunAngleVector.y = y - gun.getRectangle().y;
+                // 32 is half the size of gun sprite
+                gunAngleVector.x = x - gun.getRectangle().x - 32;
+                gunAngleVector.y = y - gun.getRectangle().y - 32;
 
                 return true;
             }
 
             @Override
             public void touchDragged (InputEvent event, float x, float y, int pointer) {
-                gunAngleVector.x = x - gun.getRectangle().x;
-                gunAngleVector.y = y - gun.getRectangle().y;
+                // 32 is half the size of gun sprite
+                gunAngleVector.x = x - gun.getRectangle().x - 32;
+                gunAngleVector.y = y - gun.getRectangle().y - 32;
             }
 
             @Override
             public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
+                gun.shoot();
 
                 return true;
             }
