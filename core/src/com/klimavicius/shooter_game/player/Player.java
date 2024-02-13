@@ -10,14 +10,17 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
+import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.klimavicius.shooter_game.utils.Constants;
 
-import javax.imageio.ImageTranscoder;
 
 public class Player extends Actor {
     private final OrthographicCamera camera;
 
-    private final Texture playerImage;
+    private final Gun gun;
+    private final Vector2 gunAngleVector = new Vector2(0, 0);
+
+    private final Texture texture;
     private final Rectangle rectangle;
 
     private final double speed;
@@ -32,12 +35,12 @@ public class Player extends Actor {
         return rectangle;
     }
 
-    public Player(OrthographicCamera camera, double speed, double cameraSpeed) {
+    public Player(OrthographicCamera camera, Stage stage, double speed, double cameraSpeed) {
         this.speed = speed;
         this.cameraSpeed = cameraSpeed;
         this.camera = camera;
 
-        playerImage = new Texture(Gdx.files.internal("player.png"));
+        texture = new Texture(Gdx.files.internal("player.png"));
 
         rectangle = new Rectangle(
                 (float) Constants.SCREEN_WIDTH / 2 - (float) 64 / 2,
@@ -46,7 +49,32 @@ public class Player extends Actor {
                 64
         );
 
+        gun = new Gun();
+        stage.addActor(gun);
+
         this.addListener(new InputListener() {
+            // MOUSE EVENTS
+            @Override
+            public boolean mouseMoved(InputEvent event, float x, float y) {
+                gunAngleVector.x = x - gun.getRectangle().x;
+                gunAngleVector.y = y - gun.getRectangle().y;
+
+                return true;
+            }
+
+            @Override
+            public void touchDragged (InputEvent event, float x, float y, int pointer) {
+                gunAngleVector.x = x - gun.getRectangle().x;
+                gunAngleVector.y = y - gun.getRectangle().y;
+            }
+
+            @Override
+            public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
+
+                return true;
+            }
+
+            // KEYBOARD EVENTS
             @Override
             public boolean keyDown(InputEvent event, int keycode) {
                 if (event.getKeyCode() == Input.Keys.A)
@@ -79,7 +107,7 @@ public class Player extends Actor {
 
     @Override
     public void draw(Batch batch, float parentAlpha) {
-        batch.draw(playerImage, rectangle.x, rectangle.y, 64, 64);
+        batch.draw(texture, rectangle.x, rectangle.y, 64, 64);
     }
 
     private int countMovementBooleans() {
@@ -131,5 +159,9 @@ public class Player extends Actor {
         if (camera.position.y > rectangle.y)
             camera.translate(0, -cameraSpeed * delta);
 
+        gun.getRectangle().x = rectangle.x + 75;
+        gun.getRectangle().y = rectangle.y + 10;
+
+        gun.setRotation((float) (Math.atan2(gunAngleVector.y, gunAngleVector.x) * 180 / Math.PI));
     }
 }
