@@ -22,7 +22,6 @@ public class Player extends Actor {
 
     private final double speed;
     private final double cameraSpeed;
-    private boolean cameraAtEdge = false;
 
     private boolean moveLeft = false;
     private boolean moveRight = false;
