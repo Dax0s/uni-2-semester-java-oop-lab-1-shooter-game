@@ -16,10 +16,15 @@ public class Bullet {
     public Bullet(float x, float y, float rotation, float lifetime, Vector2 angleVector) {
         this.texture = new Texture(Gdx.files.internal("bullet.png"));
 
-        this.rectangle = new Rectangle(x, y, 64, 64);
+        this.angleVector = angleVector.nor();
+        this.rectangle = new Rectangle(x + 40 * angleVector.x, y + 40 * angleVector.y, 64, 64);
         this.rotation = rotation;
         this.lifetime = lifetime;
-        this.angleVector = angleVector.nor();
+    }
+
+    public void move(float delta, float speed) {
+        rectangle.x += delta * angleVector.x * speed;
+        rectangle.y += delta * angleVector.y * speed;
     }
 
     public Rectangle getRectangle() {

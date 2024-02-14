@@ -32,6 +32,7 @@ public class Gun extends Actor {
     }
 
     public void shoot(Vector2 angleVector) {
+        angleVector.nor();
         bullets.add(new Bullet(rectangle.x, rectangle.y, this.getRotation(), Constants.BULLET_LIFETIME, angleVector));
     }
 
@@ -49,8 +50,7 @@ public class Gun extends Actor {
         for (int i = bullets.size - 1; i >= 0; i--) {
             bullets.get(i).setLifetime(bullets.get(i).getLifetime() - delta);
 
-            bullets.get(i).setX(bullets.get(i).getX() + delta * bullets.get(i).getAngleVector().x * 600f);
-            bullets.get(i).setY(bullets.get(i).getY() + delta * bullets.get(i).getAngleVector().y * 600f);
+            bullets.get(i).move(delta, 600);
 
             if (bullets.get(i).getLifetime() <= 0)
                 bullets.removeIndex(i);

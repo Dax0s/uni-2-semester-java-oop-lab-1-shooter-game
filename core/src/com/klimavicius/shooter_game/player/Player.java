@@ -164,6 +164,8 @@ public class Player extends Actor {
         if (camera.position.y > rectangle.y)
             camera.translate(0, -cameraSpeed * delta);
 
+        gunAngleVector.nor();
+
         gun.getRectangle().x = rectangle.x + 75;
         gun.getRectangle().y = rectangle.y + 10;
 
