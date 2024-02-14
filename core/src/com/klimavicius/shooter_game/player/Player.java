@@ -72,7 +72,7 @@ public class Player extends Actor {
 
             @Override
             public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
-                gun.shoot();
+                gun.shoot(gunAngleVector.cpy());
 
                 return true;
             }
