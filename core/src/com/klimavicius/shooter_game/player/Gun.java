@@ -15,13 +15,15 @@ public class Gun extends Actor {
     private final Rectangle rectangle;
 
     private final Array<Bullet> bullets = new Array<>();
+    private final Array<Rectangle> walls;
 
     public Rectangle getRectangle() {
         return rectangle;
     }
 
-    public Gun() {
+    public Gun(Array<Rectangle> walls) {
         this.gunTexture = new Texture(Gdx.files.internal("gun2.png"));
+        this.walls = walls;
 
         this.rectangle = new Rectangle(
                 Constants.SCREEN_WIDTH / 2.0f - 64 / 2.0f,
@@ -54,6 +56,15 @@ public class Gun extends Actor {
 
             if (bullets.get(i).getLifetime() <= 0)
                 bullets.removeIndex(i);
+
+            float x = bullets.get(i).getX();
+            float y = bullets.get(i).getY();
+            for (Rectangle wall : walls) {
+                if (bullets.get(i).getRectangle().overlaps(wall)) {
+                    bullets.removeIndex(i);
+                    break;
+                }
+            }
         }
     }
 }

@@ -53,7 +53,7 @@ public class Player extends Actor {
                 64
         );
 
-        gun = new Gun();
+        gun = new Gun(walls);
         stage.addActor(gun);
 
         this.addListener(new InputListener() {
@@ -212,14 +212,7 @@ public class Player extends Actor {
             }
         }
 
-//        double distance = Math.sqrt(Math.pow(Math.abs(rectangle.x - camera.position.x), 2) +
-//                        Math.pow(Math.abs(rectangle.y - camera.position.y), 2));
-
-//        if (distance >= 100)
-//            cameraSpeed = speed;
-
         int moveBy = (int) ((int) Math.abs(rectangle.x - camera.position.x) * cameraSpeed * delta);
-        System.out.println(moveBy);
         for (int i = 0; i < moveBy; i++)
         {
             if ((int) camera.position.x != (int) rectangle.x)
