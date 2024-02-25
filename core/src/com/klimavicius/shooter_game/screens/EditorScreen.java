@@ -247,9 +247,7 @@ public class EditorScreen implements Screen {
                                 64,
                                 64
                         ));
-                    }
-
-                    if (tileToPlace == Tile.ZOMBIE_SPAWNER) {
+                    } else if (tileToPlace == Tile.ZOMBIE_SPAWNER) {
                         Spawner spawner = new Spawner(
                                 "zombie",
                                 3,
@@ -261,14 +259,13 @@ public class EditorScreen implements Screen {
                                 player
                         );
 
-                        if (tileToPlace == Tile.PLAYER) {
-                            player.getRectangle().x = coords.x;
-                            player.getRectangle().y = coords.y;
-                        }
-
                         spawners.add(spawner);
                         customStage.getStage().addActor(spawner);
+                    } else if (tileToPlace == Tile.PLAYER) {
+                        player.getRectangle().x = coords.x;
+                        player.getRectangle().y = coords.y;
                     }
+
                 } else if (button == 1) {
                     for (int i = 0; i < walls.size; i++) {
                         if (walls.get(i).x <= coords.x && walls.get(i).x + 32 >= coords.x && walls.get(i).y <= coords.y && walls.get(i).y + 32 >= coords.y) {
