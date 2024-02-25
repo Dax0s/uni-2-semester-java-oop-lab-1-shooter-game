@@ -3,13 +3,17 @@ package com.klimavicius.shooter_game.screens;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.klimavicius.shooter_game.utils.Constants;
 import com.klimavicius.shooter_game.player.Player;
 import com.klimavicius.shooter_game.ShooterGame;
 import com.klimavicius.shooter_game.utils.CustomStage;
+
+import java.util.GregorianCalendar;
 
 public class GameScreen implements Screen {
     private ShooterGame game;
@@ -18,12 +22,59 @@ public class GameScreen implements Screen {
     Player player;
 
     Texture backgroundTexture;
+    Texture wallTexture;
+
+    Array<Rectangle> walls;
 
     public GameScreen(ShooterGame game) {
-        customStage = new CustomStage(false, Constants.SCREEN_WIDTH, Constants.SCREEN_HEIGHT);
+        walls = new Array<Rectangle>();
+        for (int i = 0; i < 15; i++)
+        {
+            walls.add(new Rectangle(
+                    i * 64,
+                    0,
+                    64,
+                    64
+            ));
+        }
+        for (int i = 0; i < 15; i++)
+        {
+            walls.add(new Rectangle(
+                    0,
+                    i * 64,
+                    64,
+                    64
+            ));
+        }
+        for (int i = 0; i < 16; i++)
+        {
+            walls.add(new Rectangle(
+                    i * 64,
+                    64 * 15,
+                    64,
+                    64
+            ));
+        }
+        for (int i = 0; i < 16; i++)
+        {
+            walls.add(new Rectangle(
+                    64 * 15,
+                    i * 64,
+                    64,
+                    64
+            ));
+        }
 
+        walls.add(new Rectangle(
+                155,
+                128,
+                64,
+                64
+        ));
+
+        customStage = new CustomStage(false, Constants.SCREEN_WIDTH, Constants.SCREEN_HEIGHT);
         this.game = game;
-        this.player = new Player(customStage.getCamera(), customStage.getStage(), Constants.PLAYER_SPEED, Constants.CAMERA_SPEED);
+        this.player = new Player(customStage.getCamera(), customStage.getStage(), walls, Constants.PLAYER_SPEED, Constants.CAMERA_SPEED);
 
         Gdx.input.setInputProcessor(customStage.getStage());
 
@@ -56,6 +107,7 @@ public class GameScreen implements Screen {
         });
 
         backgroundTexture = new Texture(Gdx.files.internal("background.jpeg"));
+        wallTexture = new Texture(Gdx.files.internal("wall.png"));
     }
 
     @Override
@@ -68,7 +120,10 @@ public class GameScreen implements Screen {
         ScreenUtils.clear(1, 1, 1, 1);
 
         customStage.getStage().getBatch().begin();
-        customStage.getStage().getBatch().draw(backgroundTexture, 0, 0);
+
+        for (Rectangle rectangle : walls)
+            customStage.getStage().getBatch().draw(wallTexture, rectangle.x, rectangle.y, 64, 64);
+
         customStage.getStage().getBatch().end();
 
         customStage.getStage().act(delta);

@@ -11,6 +11,7 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.utils.Array;
 import com.klimavicius.shooter_game.utils.Constants;
 
 
@@ -22,6 +23,8 @@ public class Player extends Actor {
 
     private final Texture texture;
     private final Rectangle rectangle;
+
+    Array<Rectangle> walls;
 
     private final float speed;
     private final float cameraSpeed;
@@ -35,10 +38,11 @@ public class Player extends Actor {
         return rectangle;
     }
 
-    public Player(OrthographicCamera camera, Stage stage, float speed, float cameraSpeed) {
+    public Player(OrthographicCamera camera, Stage stage, Array<Rectangle> walls, float speed, float cameraSpeed) {
         this.speed = speed;
         this.cameraSpeed = cameraSpeed;
         this.camera = camera;
+        this.walls = walls;
 
         texture = new Texture(Gdx.files.internal("player.png"));
 
@@ -140,29 +144,104 @@ public class Player extends Actor {
             cameraSpeed *= 0.7f;
 
         if (moveLeft)
-            rectangle.x -= (speed * delta);
+        {
+            boolean canMove = true;
+            for (int i = 0; i < (int) (speed * delta); i++)
+            {
+                for (Rectangle wall : walls)
+                {
+                    if ((int) rectangle.x == (int) wall.x + 64 && Math.abs(rectangle.y - wall.y) < 64) {
+                        canMove = false;
+                        break;
+                    }
+                }
+
+                if (canMove)
+                    rectangle.x -= 1;
+            }
+        }
          if (moveRight)
-            rectangle.x += (speed * delta);
+         {
+             boolean canMove = true;
+             for (int i = 0; i < (int) (speed * delta); i++)
+             {
+                 for (Rectangle wall : walls)
+                 {
+                     if ((int) rectangle.x + 64 == (int) wall.x && Math.abs(rectangle.y - wall.y) < 64) {
+                         canMove = false;
+                         break;
+                     }
+                 }
+
+                 if (canMove)
+                     rectangle.x += 1;
+             }
+         }
          if (moveDown)
-            rectangle.y -= (speed * delta);
+         {
+             boolean canMove = true;
+             for (int i = 0; i < (int) (speed * delta); i++)
+             {
+                 for (Rectangle wall : walls)
+                 {
+                     if ((int) rectangle.y == (int) wall.y + 64 && Math.abs(rectangle.x - wall.x) < 64) {
+                         canMove = false;
+                         break;
+                     }
+                 }
+
+                 if (canMove)
+                     rectangle.y -= 1;
+             }
+         }
         if (moveUp)
-            rectangle.y += (speed * delta);
+        {
+            boolean canMove = true;
+            for (int i = 0; i < (int) (speed * delta); i++)
+            {
+                for (Rectangle wall : walls)
+                {
+                    if ((int) rectangle.y + 64 == (int) wall.y && Math.abs(rectangle.x - wall.x) < 64) {
+                        canMove = false;
+                        break;
+                    }
+                }
 
-        double distance = Math.sqrt(Math.pow(Math.abs(rectangle.x - camera.position.x), 2) +
-                        Math.pow(Math.abs(rectangle.y - camera.position.y), 2));
+                if (canMove)
+                    rectangle.y += 1;
+            }
+        }
 
-        if (distance >= 100)
-            cameraSpeed = speed;
+//        double distance = Math.sqrt(Math.pow(Math.abs(rectangle.x - camera.position.x), 2) +
+//                        Math.pow(Math.abs(rectangle.y - camera.position.y), 2));
 
+//        if (distance >= 100)
+//            cameraSpeed = speed;
 
-        if (camera.position.x < rectangle.x)
-            camera.translate(cameraSpeed * delta, 0);
-        if (camera.position.x > rectangle.x)
-            camera.translate(-cameraSpeed * delta, 0);
-        if (camera.position.y < rectangle.y)
-            camera.translate(0, cameraSpeed * delta);
-        if (camera.position.y > rectangle.y)
-            camera.translate(0, -cameraSpeed * delta);
+        int moveBy = (int) ((int) Math.abs(rectangle.x - camera.position.x) * cameraSpeed * delta);
+        System.out.println(moveBy);
+        for (int i = 0; i < moveBy; i++)
+        {
+            if ((int) camera.position.x != (int) rectangle.x)
+            {
+                if (rectangle.x > camera.position.x)
+                    camera.position.x += 1;
+                else
+                    camera.position.x -= 1;
+            }
+        }
+
+        moveBy = (int) ((int) Math.abs(rectangle.y - camera.position.y) * cameraSpeed * delta);
+        for (int i = 0; i < moveBy; i++)
+        {
+            if ((int) camera.position.y != (int) rectangle.y)
+            {
+                if (rectangle.y > camera.position.y)
+                    camera.position.y += 1;
+                else
+                    camera.position.y -= 1;
+            }
+        }
 
         gunAngleVector.nor();
 
