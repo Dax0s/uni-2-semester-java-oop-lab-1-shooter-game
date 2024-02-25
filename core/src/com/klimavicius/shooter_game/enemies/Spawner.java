@@ -10,6 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.utils.Array;
 import com.klimavicius.shooter_game.player.Bullet;
 import com.klimavicius.shooter_game.player.Gun;
+import com.klimavicius.shooter_game.player.Player;
 
 
 public class Spawner extends Actor {
@@ -22,24 +23,31 @@ public class Spawner extends Actor {
     private final Texture enemyTexture;
 
     private Array<Rectangle> enemies = new Array<Rectangle>();
+    private final float speed;
+
     private final Gun gun;
+    private final Player player;
 
     private float timeSinceLastSpawn;
 
-    public Spawner(String enemy, float spawnDelay, int enemiesToSpawn, float x, float y, Gun gun) {
+    public Spawner(String enemy, float spawnDelay, int enemiesToSpawn, float speed, float x, float y, Gun gun, Player player) {
         this.enemy = enemy;
         this.spawnDelay = spawnDelay;
         this.enemiesToSpawn = enemiesToSpawn;
         this.spawnerLocation = new Vector2(x * 64, y * 64);
+        this.speed = speed;
 
         this.gun = gun;
+        this.player = player;
 
         this.spawnerTexture = new Texture(Gdx.files.internal(enemy + "_spawner.png"));
         this.enemyTexture = new Texture(Gdx.files.internal(enemy + ".png"));
     }
 
     private void spawnEnemy() {
-
+        timeSinceLastSpawn = spawnDelay;
+        enemies.add(new Rectangle(spawnerLocation.x, spawnerLocation.y, 64, 64));
+        enemiesToSpawn--;
     }
 
     @Override
@@ -47,7 +55,7 @@ public class Spawner extends Actor {
         batch.draw(spawnerTexture, spawnerLocation.x, spawnerLocation.y, 64, 64);
 
         for (Rectangle enemy: enemies) {
-            batch.draw(enemyTexture, spawnerLocation.x, spawnerLocation.y, 64, 64);
+            batch.draw(enemyTexture, enemy.x, enemy.y, 64, 64);
         }
     }
 
@@ -57,9 +65,7 @@ public class Spawner extends Actor {
             timeSinceLastSpawn -= delta;
 
         if (enemiesToSpawn > 0 && timeSinceLastSpawn <= 0) {
-            timeSinceLastSpawn = spawnDelay;
-            enemies.add(new Rectangle(spawnerLocation.x, spawnerLocation.y, 64, 64));
-            enemiesToSpawn--;
+            spawnEnemy();
         }
 
         for (int i = this.gun.getBullets().size - 1; i >= 0; i--) {
@@ -71,5 +77,17 @@ public class Spawner extends Actor {
                 }
             }
         }
+
+        for (Rectangle enemy : enemies) {
+            Vector2 direction = new Vector2();
+            direction.x = player.getRectangle().x - enemy.x;
+            direction.y = player.getRectangle().y - enemy.y;
+            direction.nor();
+
+            enemy.x += direction.x * speed * delta;
+            enemy.y += direction.y * speed * delta;
+        }
+
+
     }
 }

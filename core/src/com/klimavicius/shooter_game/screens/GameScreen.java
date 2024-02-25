@@ -54,7 +54,7 @@ public class GameScreen implements Screen {
                 walls,
                 base.get("player").getInt("x") * 64,
                 base.get("player").getInt("y") * 64,
-                Constants.PLAYER_SPEED,
+                base.get("player").getFloat("speed"),
                 Constants.CAMERA_SPEED
         );
 
@@ -67,9 +67,11 @@ public class GameScreen implements Screen {
                         spawner.getString("enemy"),
                         spawner.getFloat("spawnDelay"),
                         spawner.getInt("enemiesToSpawn"),
+                        spawner.getFloat("speed"),
                         spawner.getFloat("x"),
                         spawner.getFloat("y"),
-                        this.player.getGun()
+                        this.player.getGun(),
+                        this.player
                 ));
             }
         }

@@ -2,7 +2,8 @@
   "player":
   {
     "x": 4,
-    "y": 4
+    "y": 4,
+    "speed": 300
   },
   "spawners":
   [
@@ -11,7 +12,8 @@
       "spawnDelay": 3,
       "enemiesToSpawn": 10,
       "x": 3,
-      "y": 3
+      "y": 3,
+      "speed": 100
     }
   ],
   "walls":
