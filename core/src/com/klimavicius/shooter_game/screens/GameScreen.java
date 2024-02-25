@@ -7,6 +7,7 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.utils.*;
+import com.klimavicius.shooter_game.enemies.Spawner;
 import com.klimavicius.shooter_game.utils.Constants;
 import com.klimavicius.shooter_game.player.Player;
 import com.klimavicius.shooter_game.ShooterGame;
@@ -24,19 +25,18 @@ public class GameScreen implements Screen {
     Texture wallTexture;
 
     Array<Rectangle> walls;
+    Array<Spawner> spawners;
 
     public GameScreen(ShooterGame game) {
-        walls = new Array<Rectangle>();
+        walls = new Array<>();
 
         JsonReader jsonReader = new JsonReader();
         JsonValue base = jsonReader.parse(Gdx.files.internal("level1.json"));
 
         JsonValue jsonWalls = base.get("walls");
 
-        if (jsonWalls != null && jsonWalls.isArray())
-        {
-            for (JsonValue wall : jsonWalls)
-            {
+        if (jsonWalls != null && jsonWalls.isArray()) {
+            for (JsonValue wall : jsonWalls) {
                 walls.add(new Rectangle(
                         wall.getInt("x") * 64,
                         wall.getInt("Y") * 64,
@@ -57,6 +57,26 @@ public class GameScreen implements Screen {
                 Constants.PLAYER_SPEED,
                 Constants.CAMERA_SPEED
         );
+
+        JsonValue jsonSpawners = base.get("spawners");
+
+        if (jsonSpawners != null && jsonSpawners.isArray()) {
+            spawners = new Array<>();
+            for (JsonValue spawner : jsonSpawners) {
+                spawners.add(new Spawner(
+                        spawner.getString("enemy"),
+                        spawner.getFloat("spawnDelay"),
+                        spawner.getInt("enemiesToSpawn"),
+                        spawner.getFloat("x"),
+                        spawner.getFloat("y"),
+                        this.player.getGun()
+                ));
+            }
+        }
+
+        for (Spawner spawner : spawners) {
+            customStage.getStage().addActor(spawner);
+        }
 
         Gdx.input.setInputProcessor(customStage.getStage());
 
@@ -102,6 +122,7 @@ public class GameScreen implements Screen {
         ScreenUtils.clear(1, 1, 1, 1);
 
         customStage.getStage().getBatch().begin();
+        customStage.getStage().getBatch().setProjectionMatrix(customStage.getCamera().combined);
 
         for (Rectangle rectangle : walls)
             customStage.getStage().getBatch().draw(wallTexture, rectangle.x, rectangle.y, 64, 64);

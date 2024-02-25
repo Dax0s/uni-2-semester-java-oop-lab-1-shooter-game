@@ -67,4 +67,8 @@ public class Gun extends Actor {
             }
         }
     }
+
+    public Array<Bullet> getBullets() {
+        return bullets;
+    }
 }

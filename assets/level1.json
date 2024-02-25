@@ -4,6 +4,16 @@
     "x": 4,
     "y": 4
   },
+  "spawners":
+  [
+    {
+      "enemy": "zombie",
+      "spawnDelay": 3,
+      "enemiesToSpawn": 10,
+      "x": 3,
+      "y": 3
+    }
+  ],
   "walls":
   [
     {

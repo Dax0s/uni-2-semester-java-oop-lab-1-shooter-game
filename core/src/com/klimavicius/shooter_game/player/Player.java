@@ -243,4 +243,8 @@ public class Player extends Actor {
 
         gun.setRotation((float) (Math.atan2(gunAngleVector.y, gunAngleVector.x) * 180 / Math.PI));
     }
+
+    public Gun getGun() {
+        return this.gun;
+    }
 }
