@@ -38,7 +38,7 @@ public class Player extends Actor {
         return rectangle;
     }
 
-    public Player(OrthographicCamera camera, Stage stage, Array<Rectangle> walls, float speed, float cameraSpeed) {
+    public Player(OrthographicCamera camera, Stage stage, Array<Rectangle> walls, float x, float y, float speed, float cameraSpeed) {
         this.speed = speed;
         this.cameraSpeed = cameraSpeed;
         this.camera = camera;
@@ -47,8 +47,8 @@ public class Player extends Actor {
         texture = new Texture(Gdx.files.internal("player.png"));
 
         rectangle = new Rectangle(
-                Constants.SCREEN_WIDTH / 2.0f - 64 / 2.0f,
-                Constants.SCREEN_HEIGHT / 2.0f - 64 / 2.0f,
+                x,
+                y,
                 64,
                 64
         );

@@ -6,8 +6,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
-import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.ScreenUtils;
+import com.badlogic.gdx.utils.*;
 import com.klimavicius.shooter_game.utils.Constants;
 import com.klimavicius.shooter_game.player.Player;
 import com.klimavicius.shooter_game.ShooterGame;
@@ -28,53 +27,36 @@ public class GameScreen implements Screen {
 
     public GameScreen(ShooterGame game) {
         walls = new Array<Rectangle>();
-        for (int i = 0; i < 15; i++)
-        {
-            walls.add(new Rectangle(
-                    i * 64,
-                    0,
-                    64,
-                    64
-            ));
-        }
-        for (int i = 0; i < 15; i++)
-        {
-            walls.add(new Rectangle(
-                    0,
-                    i * 64,
-                    64,
-                    64
-            ));
-        }
-        for (int i = 0; i < 16; i++)
-        {
-            walls.add(new Rectangle(
-                    i * 64,
-                    64 * 15,
-                    64,
-                    64
-            ));
-        }
-        for (int i = 0; i < 16; i++)
-        {
-            walls.add(new Rectangle(
-                    64 * 15,
-                    i * 64,
-                    64,
-                    64
-            ));
-        }
 
-        walls.add(new Rectangle(
-                155,
-                128,
-                64,
-                64
-        ));
+        JsonReader jsonReader = new JsonReader();
+        JsonValue base = jsonReader.parse(Gdx.files.internal("level1.json"));
+
+        JsonValue jsonWalls = base.get("walls");
+
+        if (jsonWalls != null && jsonWalls.isArray())
+        {
+            for (JsonValue wall : jsonWalls)
+            {
+                walls.add(new Rectangle(
+                        wall.getInt("x") * 64,
+                        wall.getInt("Y") * 64,
+                        64,
+                        64
+                ));
+            }
+        }
 
         customStage = new CustomStage(false, Constants.SCREEN_WIDTH, Constants.SCREEN_HEIGHT);
         this.game = game;
-        this.player = new Player(customStage.getCamera(), customStage.getStage(), walls, Constants.PLAYER_SPEED, Constants.CAMERA_SPEED);
+        this.player = new Player(
+                customStage.getCamera(),
+                customStage.getStage(),
+                walls,
+                base.get("player").getInt("x") * 64,
+                base.get("player").getInt("y") * 64,
+                Constants.PLAYER_SPEED,
+                Constants.CAMERA_SPEED
+        );
 
         Gdx.input.setInputProcessor(customStage.getStage());
 
