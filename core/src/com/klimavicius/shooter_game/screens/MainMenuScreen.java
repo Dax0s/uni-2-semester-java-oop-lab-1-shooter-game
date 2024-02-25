@@ -15,8 +15,9 @@ import com.klimavicius.shooter_game.utils.CustomStage;
 public class MainMenuScreen implements Screen {
     private final ShooterGame game;
 
-    CustomStage customStage;
-    Button button;
+    private final CustomStage customStage;
+    private final Button button;
+    private final Button editorButton;
 
     public MainMenuScreen(ShooterGame game) {
         this.game = game;
@@ -39,7 +40,22 @@ public class MainMenuScreen implements Screen {
             }
         });
 
+        editorButton = new TextButton("Editor", new Skin(Gdx.files.internal("button_skins/uiskin.json")));
+        editorButton.setX((float) Constants.SCREEN_WIDTH / 2 - editorButton.getPrefWidth() / 2);
+        editorButton.setY((float) Constants.SCREEN_HEIGHT / 2 - editorButton.getPrefHeight() / 2 - 50);
+
+        editorButton.addListener(new InputListener() {
+            @Override
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                game.setScreen(new EditorScreen(game));
+                dispose();
+
+                return true;
+            }
+        });
+
         customStage.getStage().addActor(button);
+        customStage.getStage().addActor(editorButton);
     }
 
 

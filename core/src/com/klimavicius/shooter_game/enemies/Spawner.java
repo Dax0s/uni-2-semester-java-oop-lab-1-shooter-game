@@ -15,6 +15,7 @@ import com.klimavicius.shooter_game.player.Player;
 
 public class Spawner extends Actor {
     private final String enemy;
+
     private final float spawnDelay;
     private int enemiesToSpawn;
     private final Vector2 spawnerLocation;
@@ -30,9 +31,7 @@ public class Spawner extends Actor {
 
     private float timeSinceLastSpawn;
 
-    public Spawner(String enemy, float spawnDelay, int enemiesToSpawn, float speed, float x, float y, Gun gun, Player player) {
-        this.enemy = enemy;
-        this.spawnDelay = spawnDelay;
+    public Spawner(String enemy, float spawnDelay, int enemiesToSpawn, float speed, float x, float y, Gun gun, Player player) { this.enemy = enemy; this.spawnDelay = spawnDelay;
         this.enemiesToSpawn = enemiesToSpawn;
         this.spawnerLocation = new Vector2(x * 64, y * 64);
         this.speed = speed;
@@ -87,7 +86,25 @@ public class Spawner extends Actor {
             enemy.x += direction.x * speed * delta;
             enemy.y += direction.y * speed * delta;
         }
+    }
 
+    public Vector2 getSpawnerLocation() {
+        return spawnerLocation;
+    }
 
+    public String getEnemy() {
+        return enemy;
+    }
+
+    public float getSpawnDelay() {
+        return spawnDelay;
+    }
+
+    public int getEnemiesToSpawn() {
+        return enemiesToSpawn;
+    }
+
+    public float getSpeed() {
+        return speed;
     }
 }
