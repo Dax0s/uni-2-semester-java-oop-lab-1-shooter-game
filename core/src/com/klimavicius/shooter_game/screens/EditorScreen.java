@@ -213,10 +213,6 @@ public class EditorScreen implements Screen {
                 coords.x -= customStage.getCamera().position.x - (float) Constants.SCREEN_WIDTH / 2;
                 coords.y += customStage.getCamera().position.y - (float) Constants.SCREEN_HEIGHT / 2;
 
-                if (player.getRectangle().x <= coords.x && player.getRectangle().x + 64 >= coords.x && player.getRectangle().y <= coords.y && player.getRectangle().y + 64 >= coords.y) {
-                    System.out.println("yes");
-                }
-
                 coords.x = (float) ((int) coords.x / 64) * 64;
                 coords.y = (float) ((int) coords.y / 64) * 64;
 
@@ -278,13 +274,11 @@ public class EditorScreen implements Screen {
                                 spawners.get(i).getSpawnerLocation().x + 32 >= coords.x &&
                                 spawners.get(i).getSpawnerLocation().y <= coords.y &&
                                 spawners.get(i).getSpawnerLocation().y + 32 >= coords.y) {
+                            spawners.get(i).remove();
                             spawners.removeIndex(i);
-                            System.out.println("Remove spawner");
                             break;
                         }
                     }
-
-                    System.out.println(spawners.size);
                 }
 
                 return true;
