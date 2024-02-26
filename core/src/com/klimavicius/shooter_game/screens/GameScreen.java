@@ -8,6 +8,7 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.utils.*;
 import com.klimavicius.shooter_game.enemies.Spawner;
+import com.klimavicius.shooter_game.player.Portal;
 import com.klimavicius.shooter_game.utils.Constants;
 import com.klimavicius.shooter_game.player.Player;
 import com.klimavicius.shooter_game.ShooterGame;
@@ -18,14 +19,16 @@ import java.util.GregorianCalendar;
 public class GameScreen implements Screen {
     private ShooterGame game;
 
-    CustomStage customStage;
-    Player player;
+    private final CustomStage customStage;
+    private final Player player;
 
-    Texture backgroundTexture;
-    Texture wallTexture;
+    private final Texture backgroundTexture;
+    private final Texture wallTexture;
 
-    Array<Rectangle> walls;
-    Array<Spawner> spawners;
+    private final Array<Rectangle> walls;
+    private Array<Spawner> spawners;
+
+    private Portal portal;
 
     public GameScreen(ShooterGame game) {
         walls = new Array<>();
@@ -58,6 +61,12 @@ public class GameScreen implements Screen {
                 Constants.CAMERA_SPEED
         );
 
+        this.portal = new Portal(
+                false,
+                base.get("portal").getInt("x") * 64,
+                base.get("portal").getInt("y") * 64
+        );
+
         JsonValue jsonSpawners = base.get("spawners");
 
         if (jsonSpawners != null && jsonSpawners.isArray()) {
@@ -83,6 +92,7 @@ public class GameScreen implements Screen {
         Gdx.input.setInputProcessor(customStage.getStage());
 
         customStage.getStage().addActor(this.player);
+        customStage.getStage().addActor(this.portal);
         customStage.getStage().setKeyboardFocus(this.player);
 
         customStage.getStage().addListener(new InputListener() {
@@ -128,6 +138,18 @@ public class GameScreen implements Screen {
 
         for (Rectangle rectangle : walls)
             customStage.getStage().getBatch().draw(wallTexture, rectangle.x, rectangle.y, 64, 64);
+
+        boolean portalShouldBeVisible = true;
+        for (Spawner spawner : spawners) {
+            if (spawner.getEnemiesToSpawn() > 0 || spawner.getEnemies().size > 0) {
+                portalShouldBeVisible = false;
+                break;
+            }
+        }
+
+        if (portalShouldBeVisible) {
+            portal.setPortalVisible(true);
+        }
 
         customStage.getStage().getBatch().end();
 

@@ -23,7 +23,7 @@ public class Spawner extends Actor {
     private final Texture spawnerTexture;
     private final Texture enemyTexture;
 
-    private Array<Rectangle> enemies = new Array<Rectangle>();
+    private Array<Rectangle> enemies = new Array<>();
     private final float speed;
 
     private final Gun gun;
@@ -90,6 +90,10 @@ public class Spawner extends Actor {
 
     public Vector2 getSpawnerLocation() {
         return spawnerLocation;
+    }
+
+    public Array<Rectangle> getEnemies() {
+        return enemies;
     }
 
     public String getEnemy() {

@@ -15,23 +15,25 @@ import com.badlogic.gdx.utils.*;
 import com.klimavicius.shooter_game.ShooterGame;
 import com.klimavicius.shooter_game.enemies.Spawner;
 import com.klimavicius.shooter_game.player.Player;
+import com.klimavicius.shooter_game.player.Portal;
 import com.klimavicius.shooter_game.utils.Constants;
 import com.klimavicius.shooter_game.utils.CustomStage;
-import sun.tools.jconsole.JConsole;
 
 import java.io.*;
 
 public class EditorScreen implements Screen {
-    private ShooterGame game;
+    private final ShooterGame game;
 
-    CustomStage customStage;
-    Player player;
+    private final CustomStage customStage;
+    private final Player player;
 
-    Texture backgroundTexture;
-    Texture wallTexture;
+    private final Texture backgroundTexture;
+    private final Texture wallTexture;
 
-    Array<Rectangle> walls;
-    Array<Spawner> spawners;
+    private final Array<Rectangle> walls;
+    private Array<Spawner> spawners;
+
+    private Portal portal;
 
     private boolean moveLeft = false;
     private boolean moveRight = false;
@@ -41,12 +43,14 @@ public class EditorScreen implements Screen {
     enum Tile {
         WALL,
         PLAYER,
-        ZOMBIE_SPAWNER
+        PORTAL,
+        GHOST_SPAWNER
     }
 
     private final Button wallButton;
     private final Button playerButton;
-    private final Button zombieSpawnerButton;
+    private final Button portalButton;
+    private final Button ghostSpawnerButton;
     private final Button saveButton;
 
     private Tile tileToPlace = Tile.WALL;
@@ -82,6 +86,12 @@ public class EditorScreen implements Screen {
                 Constants.CAMERA_SPEED
         );
 
+        this.portal = new Portal(
+                true,
+                base.get("portal").getInt("x") * 64,
+                base.get("portal").getInt("y") * 64
+        );
+
         JsonValue jsonSpawners = base.get("spawners");
 
         if (jsonSpawners != null && jsonSpawners.isArray()) {
@@ -109,6 +119,7 @@ public class EditorScreen implements Screen {
         Gdx.input.setInputProcessor(customStage.getStage());
 
         customStage.getStage().addActor(this.player);
+        customStage.getStage().addActor(this.portal);
 //        customStage.getStage().setKeyboardFocus(this.player);
 
         wallButton = new TextButton("Wall", new Skin(Gdx.files.internal("button_skins/uiskin.json")));
@@ -126,9 +137,24 @@ public class EditorScreen implements Screen {
             }
         });
 
+        portalButton = new TextButton("Portal", new Skin(Gdx.files.internal("button_skins/uiskin.json")));
+        portalButton.setX((float) Constants.SCREEN_WIDTH - 100 - portalButton.getPrefWidth() / 2);
+        portalButton.setY((float) Constants.SCREEN_HEIGHT - 130);
+
+        portalButton.addListener(new InputListener() {
+            @Override
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                tileToPlace = Tile.PORTAL;
+
+                event.cancel();
+
+                return true;
+            }
+        });
+
         playerButton = new TextButton("Player", new Skin(Gdx.files.internal("button_skins/uiskin.json")));
         playerButton.setX((float) Constants.SCREEN_WIDTH - 100 - playerButton.getPrefWidth() / 2);
-        playerButton.setY((float) Constants.SCREEN_HEIGHT - 130);
+        playerButton.setY((float) Constants.SCREEN_HEIGHT - 160);
 
         playerButton.addListener(new InputListener() {
             @Override
@@ -141,14 +167,14 @@ public class EditorScreen implements Screen {
             }
         });
 
-        zombieSpawnerButton = new TextButton("Zombie spawner", new Skin(Gdx.files.internal("button_skins/uiskin.json")));
-        zombieSpawnerButton.setX((float) Constants.SCREEN_WIDTH - 100 - zombieSpawnerButton.getPrefWidth() / 2);
-        zombieSpawnerButton.setY((float) Constants.SCREEN_HEIGHT - 160);
+        ghostSpawnerButton = new TextButton("Ghost spawner", new Skin(Gdx.files.internal("button_skins/uiskin.json")));
+        ghostSpawnerButton.setX((float) Constants.SCREEN_WIDTH - 100 - ghostSpawnerButton.getPrefWidth() / 2);
+        ghostSpawnerButton.setY((float) Constants.SCREEN_HEIGHT - 190);
 
-        zombieSpawnerButton.addListener(new InputListener() {
+        ghostSpawnerButton.addListener(new InputListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                tileToPlace = Tile.ZOMBIE_SPAWNER;
+                tileToPlace = Tile.GHOST_SPAWNER;
 
                 event.cancel();
 
@@ -158,7 +184,7 @@ public class EditorScreen implements Screen {
 
         saveButton = new TextButton("Save", new Skin(Gdx.files.internal("button_skins/uiskin.json")));
         saveButton.setX((float) Constants.SCREEN_WIDTH - 100 - saveButton.getPrefWidth() / 2);
-        saveButton.setY((float) Constants.SCREEN_HEIGHT - 190);
+        saveButton.setY((float) Constants.SCREEN_HEIGHT - 220);
 
         saveButton.addListener(new InputListener() {
             @Override
@@ -172,8 +198,9 @@ public class EditorScreen implements Screen {
         });
 
         customStage.getStage().addActor(playerButton);
+        customStage.getStage().addActor(portalButton);
         customStage.getStage().addActor(wallButton);
-        customStage.getStage().addActor(zombieSpawnerButton);
+        customStage.getStage().addActor(ghostSpawnerButton);
         customStage.getStage().addActor(saveButton);
 
         customStage.getStage().addListener(new InputListener() {
@@ -243,9 +270,9 @@ public class EditorScreen implements Screen {
                                 64,
                                 64
                         ));
-                    } else if (tileToPlace == Tile.ZOMBIE_SPAWNER) {
+                    } else if (tileToPlace == Tile.GHOST_SPAWNER) {
                         Spawner spawner = new Spawner(
-                                "zombie",
+                                "ghost",
                                 3,
                                 10,
                                 100,
@@ -260,6 +287,9 @@ public class EditorScreen implements Screen {
                     } else if (tileToPlace == Tile.PLAYER) {
                         player.getRectangle().x = coords.x;
                         player.getRectangle().y = coords.y;
+                    } else if (tileToPlace == Tile.PORTAL) {
+                        portal.getRectangle().x = coords.x;
+                        portal.getRectangle().y = coords.y;
                     }
 
                 } else if (button == 1) {
@@ -302,6 +332,11 @@ public class EditorScreen implements Screen {
         json.writeValue("x", player.getRectangle().x / 64);
         json.writeValue("y", player.getRectangle().y / 64);
         json.writeValue("speed", 300);
+        json.writeObjectEnd();
+        // portal
+        json.writeObjectStart("portal");
+        json.writeValue("x", portal.getRectangle().x / 64);
+        json.writeValue("y", portal.getRectangle().y / 64);
         json.writeObjectEnd();
         // spawners
         json.writeArrayStart("spawners");
