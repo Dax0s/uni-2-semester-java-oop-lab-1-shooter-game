@@ -27,7 +27,6 @@ public class EditorScreen implements Screen {
     private final CustomStage customStage;
     private final Player player;
 
-    private final Texture backgroundTexture;
     private final Texture wallTexture;
 
     private final Array<Rectangle> walls;
@@ -55,11 +54,14 @@ public class EditorScreen implements Screen {
 
     private Tile tileToPlace = Tile.WALL;
 
-    public EditorScreen(ShooterGame game) {
+    private int levelToEdit;
+
+    public EditorScreen(ShooterGame game, int levelToEdit) {
+        this.levelToEdit = levelToEdit;
         walls = new Array<>();
 
         JsonReader jsonReader = new JsonReader();
-        JsonValue base = jsonReader.parse(Gdx.files.internal("level1.json"));
+        JsonValue base = jsonReader.parse(Gdx.files.internal("level" + levelToEdit + ".json"));
 
         JsonValue jsonWalls = base.get("walls");
 
@@ -120,7 +122,6 @@ public class EditorScreen implements Screen {
 
         customStage.getStage().addActor(this.player);
         customStage.getStage().addActor(this.portal);
-//        customStage.getStage().setKeyboardFocus(this.player);
 
         wallButton = new TextButton("Wall", new Skin(Gdx.files.internal("button_skins/uiskin.json")));
         wallButton.setX((float) Constants.SCREEN_WIDTH - 100 - wallButton.getPrefWidth() / 2);
@@ -273,8 +274,8 @@ public class EditorScreen implements Screen {
                     } else if (tileToPlace == Tile.GHOST_SPAWNER) {
                         Spawner spawner = new Spawner(
                                 "ghost",
-                                3,
-                                10,
+                                1,
+                                5,
                                 100,
                                 coords.x / 64,
                                 coords.y / 64,
@@ -315,7 +316,6 @@ public class EditorScreen implements Screen {
             }
         });
 
-        backgroundTexture = new Texture(Gdx.files.internal("background.jpeg"));
         wallTexture = new Texture(Gdx.files.internal("wall.png"));
     }
 
@@ -363,7 +363,7 @@ public class EditorScreen implements Screen {
         json.writeObjectEnd();
 
         try {
-            BufferedWriter writer = new BufferedWriter(new FileWriter("level1.json"));
+            BufferedWriter writer = new BufferedWriter(new FileWriter("level" + levelToEdit + ".json"));
             writer.write(json.getWriter().getWriter().toString());
 
             writer.close();

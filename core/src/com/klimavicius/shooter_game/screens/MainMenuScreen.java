@@ -17,7 +17,9 @@ public class MainMenuScreen implements Screen {
 
     private final CustomStage customStage;
     private final Button button;
-    private final Button editorButton;
+    private final Button editLevel1;
+    private final Button editLevel2;
+    private final Button editLevel3;
 
     public MainMenuScreen(ShooterGame game) {
         this.game = game;
@@ -33,21 +35,49 @@ public class MainMenuScreen implements Screen {
         button.addListener(new InputListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                game.setScreen(new GameScreen(game));
+                game.setScreen(new GameScreen(game, 1));
                 dispose();
 
                 return true;
             }
         });
 
-        editorButton = new TextButton("Editor", new Skin(Gdx.files.internal("button_skins/uiskin.json")));
-        editorButton.setX((float) Constants.SCREEN_WIDTH / 2 - editorButton.getPrefWidth() / 2);
-        editorButton.setY((float) Constants.SCREEN_HEIGHT / 2 - editorButton.getPrefHeight() / 2 - 50);
+        editLevel1 = new TextButton("Edit level 1", new Skin(Gdx.files.internal("button_skins/uiskin.json")));
+        editLevel1.setX((float) Constants.SCREEN_WIDTH / 2 - editLevel1.getPrefWidth() / 2);
+        editLevel1.setY((float) Constants.SCREEN_HEIGHT / 2 - editLevel1.getPrefHeight() / 2 - 50);
 
-        editorButton.addListener(new InputListener() {
+        editLevel1.addListener(new InputListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                game.setScreen(new EditorScreen(game));
+                game.setScreen(new EditorScreen(game, 1));
+                dispose();
+
+                return true;
+            }
+        });
+
+        editLevel2 = new TextButton("Edit level 2", new Skin(Gdx.files.internal("button_skins/uiskin.json")));
+        editLevel2.setX((float) Constants.SCREEN_WIDTH / 2 - editLevel2.getPrefWidth() / 2);
+        editLevel2.setY((float) Constants.SCREEN_HEIGHT / 2 - editLevel2.getPrefHeight() / 2 - 100);
+
+        editLevel2.addListener(new InputListener() {
+            @Override
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                game.setScreen(new EditorScreen(game, 2));
+                dispose();
+
+                return true;
+            }
+        });
+
+        editLevel3 = new TextButton("Edit level 3", new Skin(Gdx.files.internal("button_skins/uiskin.json")));
+        editLevel3.setX((float) Constants.SCREEN_WIDTH / 2 - editLevel3.getPrefWidth() / 2);
+        editLevel3.setY((float) Constants.SCREEN_HEIGHT / 2 - editLevel3.getPrefHeight() / 2 - 150);
+
+        editLevel3.addListener(new InputListener() {
+            @Override
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                game.setScreen(new EditorScreen(game, 3));
                 dispose();
 
                 return true;
@@ -55,7 +85,9 @@ public class MainMenuScreen implements Screen {
         });
 
         customStage.getStage().addActor(button);
-        customStage.getStage().addActor(editorButton);
+        customStage.getStage().addActor(editLevel1);
+        customStage.getStage().addActor(editLevel2);
+        customStage.getStage().addActor(editLevel3);
     }
 
 

@@ -29,11 +29,14 @@ public class GameScreen implements Screen {
 
     private Portal portal;
 
-    public GameScreen(ShooterGame game) {
+    private int currentLevel;
+
+    public GameScreen(ShooterGame game, int currentLevel) {
         walls = new Array<>();
+        this.currentLevel = currentLevel;
 
         JsonReader jsonReader = new JsonReader();
-        JsonValue base = jsonReader.parse(Gdx.files.internal("level1.json"));
+        JsonValue base = jsonReader.parse(Gdx.files.internal("level" + currentLevel + ".json"));
 
         JsonValue jsonWalls = base.get("walls");
 
@@ -147,6 +150,10 @@ public class GameScreen implements Screen {
 
         if (portalShouldBeVisible) {
             portal.setPortalVisible(true);
+        }
+
+        if (portalShouldBeVisible && portal.getRectangle().overlaps(player.getRectangle()) && currentLevel < 3) {
+            game.setScreen(new GameScreen(game, ++currentLevel));
         }
 
         customStage.getStage().getBatch().end();
