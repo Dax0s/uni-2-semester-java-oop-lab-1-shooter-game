@@ -22,14 +22,14 @@ public class Gun extends Actor {
     }
 
     public Gun(Array<Rectangle> walls) {
-        this.gunTexture = new Texture(Gdx.files.internal("gun2.png"));
+        this.gunTexture = new Texture(Gdx.files.internal("AK47.png"));
         this.walls = walls;
 
         this.rectangle = new Rectangle(
                 Constants.SCREEN_WIDTH / 2.0f - 64 / 2.0f,
                 Constants.SCREEN_WIDTH / 2.0f - 64 / 2.0f,
-                64,
-                64
+                72,
+                48
         );
     }
 

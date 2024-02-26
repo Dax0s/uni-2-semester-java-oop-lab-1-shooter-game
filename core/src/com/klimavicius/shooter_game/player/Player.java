@@ -4,7 +4,9 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -12,10 +14,10 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Array;
-import com.klimavicius.shooter_game.utils.Constants;
 
 
 public class Player extends Actor {
+    private static final int FRAME_COLS = 4, FRAME_ROWS = 12;
     private final OrthographicCamera camera;
 
     private final Gun gun;
@@ -23,6 +25,12 @@ public class Player extends Actor {
 
     private final Texture texture;
     private final Rectangle rectangle;
+
+    TextureRegion idle;
+    Animation<TextureRegion> walkXAnimation;
+    Animation<TextureRegion> walkDownAnimation;
+    Animation<TextureRegion> walkUpAnimation;
+    float stateTime;
 
     Array<Rectangle> walls;
 
@@ -45,6 +53,31 @@ public class Player extends Actor {
         this.walls = walls;
 
         texture = new Texture(Gdx.files.internal("player.png"));
+
+        TextureRegion[][] tmp = TextureRegion.split(texture,
+                texture.getWidth() / FRAME_COLS,
+                texture.getHeight() / FRAME_ROWS);
+
+        idle = tmp[0][0];
+        stateTime = 0f;
+        // DOWN
+        TextureRegion[] walkFrames = new TextureRegion[4];
+        for (int i = 0; i < FRAME_COLS; i++) {
+            walkFrames[i] = tmp[3][i];
+        }
+        walkDownAnimation = new Animation<>(0.25f, walkFrames);
+        // UP
+        walkFrames = new TextureRegion[4];
+        for (int i = 0; i < FRAME_COLS; i++) {
+            walkFrames[i] = tmp[5][i];
+        }
+        walkUpAnimation = new Animation<>(0.25f, walkFrames);
+        // RIGHT
+        walkFrames = new TextureRegion[4];
+        for (int i = 0; i < FRAME_COLS; i++) {
+            walkFrames[i] = tmp[4][i];
+        }
+        walkXAnimation = new Animation<>(0.25f, walkFrames);
 
         rectangle = new Rectangle(
                 x,
@@ -116,7 +149,43 @@ public class Player extends Actor {
 
     @Override
     public void draw(Batch batch, float parentAlpha) {
-        batch.draw(texture, rectangle.x, rectangle.y, 64, 64);
+//        batch.draw(texture, rectangle.x, rectangle.y, 64, 64);
+        stateTime += Gdx.graphics.getDeltaTime();
+
+        TextureRegion currentFrame = idle;
+
+        if (moveRight && moveLeft && countMovementBooleans() > 2) {
+            if (moveDown) {
+                currentFrame = walkDownAnimation.getKeyFrame(stateTime, true);
+            } else if (moveUp) {
+                currentFrame = walkUpAnimation.getKeyFrame(stateTime, true);
+            }
+        } else if (moveRight && moveLeft) {
+
+        } else if (moveLeft) {
+            currentFrame = walkXAnimation.getKeyFrame(stateTime, true);
+            if (!currentFrame.isFlipX()) {
+                currentFrame.flip(true, false);
+            }
+        } else if (moveRight) {
+            currentFrame = walkXAnimation.getKeyFrame(stateTime, true);
+            if (currentFrame.isFlipX()) {
+                currentFrame.flip(true, false);
+            }
+        } else if (moveUp && moveDown) {
+
+        } else if (moveDown) {
+            currentFrame = walkDownAnimation.getKeyFrame(stateTime, true);
+        } else if (moveUp) {
+            currentFrame = walkUpAnimation.getKeyFrame(stateTime, true);
+        }
+
+//        TextureRegion currentFrame = walkXAnimation.getKeyFrame(stateTime, true);
+//        if (!currentFrame.isFlipX()) {
+//            currentFrame.flip(true, false);
+//        }
+
+        batch.draw(currentFrame, rectangle.x, rectangle.y, 64, 64);
     }
 
     private int countMovementBooleans() {
