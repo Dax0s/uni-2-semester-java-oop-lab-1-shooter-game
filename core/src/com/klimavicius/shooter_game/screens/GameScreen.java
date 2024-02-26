@@ -154,6 +154,8 @@ public class GameScreen implements Screen {
 
         if (portalShouldBeVisible && portal.getRectangle().overlaps(player.getRectangle()) && currentLevel < 3) {
             game.setScreen(new GameScreen(game, ++currentLevel));
+        } else if (portalShouldBeVisible && portal.getRectangle().overlaps(player.getRectangle()) && currentLevel == 3) {
+            game.setScreen(new VictoryScreen());
         }
 
         for (int i = 0; i < spawners.size; i++) {
