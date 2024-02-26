@@ -156,6 +156,13 @@ public class GameScreen implements Screen {
             game.setScreen(new GameScreen(game, ++currentLevel));
         }
 
+        for (int i = 0; i < spawners.size; i++) {
+            for (Rectangle enemy : spawners.get(i).getEnemies()) {
+                if (enemy.overlaps(player.getRectangle()))
+                    game.setScreen(new GameScreen(game, 1));
+            }
+        }
+
         customStage.getStage().getBatch().end();
 
         customStage.getStage().act(delta);
