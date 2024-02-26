@@ -22,7 +22,6 @@ public class GameScreen implements Screen {
     private final CustomStage customStage;
     private final Player player;
 
-    private final Texture backgroundTexture;
     private final Texture wallTexture;
 
     private final Array<Rectangle> walls;
@@ -120,7 +119,6 @@ public class GameScreen implements Screen {
             }
         });
 
-        backgroundTexture = new Texture(Gdx.files.internal("background.jpeg"));
         wallTexture = new Texture(Gdx.files.internal("wall.png"));
     }
 
